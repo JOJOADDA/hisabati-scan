@@ -6,33 +6,33 @@ export interface QueueItem {
   organization_id: string;
   branch_id: string;
   image_base64: string;
-  note?: string;
+  note?: string | undefined;
   captured_at: string;
   status: QueueStatus;
   attempts: number;
   next_attempt_at: number;
-  last_error?: string;
+  last_error?: string | undefined;
 }
 
 export interface ReceiptData {
-  amount?: number;
-  transfer_date?: string;
-  sender_name?: string;
-  transaction_id?: string;
-  receiver_account?: string;
-  sender_account?: string;
-  bank_comment?: string;
-  reference_number?: string;
-  confidence?: number;
+  amount?: number | undefined;
+  transfer_date?: string | undefined;
+  sender_name?: string | undefined;
+  transaction_id?: string | undefined;
+  receiver_account?: string | undefined;
+  sender_account?: string | undefined;
+  bank_comment?: string | undefined;
+  reference_number?: string | undefined;
+  confidence?: number | undefined;
 }
 
 export interface SubmitSuccess {
   kind: "success";
   status: string; // "created" | "duplicate_retry" | ...
-  transfer_id?: string;
-  client_document_id?: string;
-  needs_review?: boolean;
-  data?: ReceiptData;
+  transfer_id?: string | undefined;
+  client_document_id?: string | undefined;
+  needs_review?: boolean | undefined;
+  data?: ReceiptData | undefined;
 }
 
 export interface SubmitDuplicate {
@@ -45,11 +45,11 @@ export interface SubmitFailure {
   kind: "error";
   /** Whether the caller may retry later with the SAME client_document_id. */
   retryable: boolean;
-  status?: number;
-  code?: string;
+  status?: number | undefined;
+  code?: string | undefined;
   message: string;
-  retryAfterMs?: number;
-  authExpired?: boolean;
+  retryAfterMs?: number | undefined;
+  authExpired?: boolean | undefined;
 }
 
 export type SubmitResult = SubmitSuccess | SubmitDuplicate | SubmitFailure;
