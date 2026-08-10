@@ -1,6 +1,6 @@
 import { getAccessToken, getSupabase, refreshAccessToken } from "./client";
 import { getHisabatiKey, getHisabatiUrl, SUBMIT_RECEIPT_PATH } from "./config";
-import type { QueueItem, SubmitResult } from "./types";
+import type { QueueItem, ReceiptData, SubmitResult } from "./types";
 
 const RETRYABLE_STATUS = new Set([408, 429, 500, 502, 503, 504]);
 
@@ -75,9 +75,10 @@ export async function submitReceipt(payload: SubmitPayload): Promise<SubmitResul
       transfer_id: body?.["transfer_id"] as string | undefined,
       client_document_id: body?.["client_document_id"] as string | undefined,
       needs_review: Boolean(body?.["needs_review"]),
-      data: body?.["data"] as SubmitResult extends never ? never : never | undefined,
-    } as SubmitResult;
+      data: (body?.["data"] as ReceiptData | undefined) ?? undefined,
+    };
   }
+
 
   const code = (body?.["error"] ?? body?.["code"] ?? "") as string;
   const message = (body?.["message"] as string) || (body?.["error"] as string) || `Request failed (${res.status})`;
