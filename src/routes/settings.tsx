@@ -1,11 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { getSupabase } from "@/lib/hisabati/client";
-import { getHisabatiKey, getHisabatiUrl, setHisabatiConfig } from "@/lib/hisabati/config";
 import { useHisabatiSession } from "@/hooks/useHisabatiSession";
 import { useScope } from "@/hooks/useScope";
 
@@ -14,9 +10,9 @@ export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
       { title: "Settings | Hisabati Scanner" },
-      { name: "description", content: "Manage your Hisabati connection, organization, branch and session." },
+      { name: "description", content: "Manage your organization, branch and session in Hisabati Scanner." },
       { property: "og:title", content: "Settings | Hisabati Scanner" },
-      { property: "og:description", content: "Manage your Hisabati connection, organization, branch and session." },
+      { property: "og:description", content: "Manage your organization, branch and session in Hisabati Scanner." },
     ],
   }),
   component: SettingsPage,
@@ -26,15 +22,6 @@ function SettingsPage() {
   const navigate = useNavigate();
   const { session } = useHisabatiSession();
   const { scope, clearScope } = useScope();
-  const [url, setUrl] = useState(() => (typeof window === "undefined" ? "" : getHisabatiUrl()));
-  const [key, setKey] = useState(() => (typeof window === "undefined" ? "" : getHisabatiKey()));
-  const [saved, setSaved] = useState(false);
-
-  function save() {
-    setHisabatiConfig(url, key);
-    setSaved(true);
-    setTimeout(() => window.location.reload(), 400);
-  }
 
   async function signOut() {
     const sb = getSupabase();
