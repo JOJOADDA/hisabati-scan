@@ -9,6 +9,8 @@
  */
 
 const DEFAULT_URL = "https://phspovgryirskfyydtzs.supabase.co";
+/** Publishable (anon) key — public by design, safe in client code. */
+const DEFAULT_KEY = "sb_publishable_KTfC458y9aRijl62B7NQkA_S2JnontZ";
 
 const ENV_URL = (import.meta.env["VITE_HISABATI_SUPABASE_URL"] as string | undefined) ?? "";
 const ENV_KEY =
@@ -33,7 +35,7 @@ export function getHisabatiUrl(): string {
 }
 
 export function getHisabatiKey(): string {
-  return ls(LS_KEY) || ENV_KEY;
+  return ls(LS_KEY) || ENV_KEY || DEFAULT_KEY;
 }
 
 export function setHisabatiConfig(url: string, key: string) {

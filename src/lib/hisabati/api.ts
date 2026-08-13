@@ -80,8 +80,14 @@ export async function submitReceipt(payload: SubmitPayload): Promise<SubmitResul
   }
 
 
-  const code = (body?.["error"] ?? body?.["code"] ?? "") as string;
-  const message = (body?.["message"] as string) || (body?.["error"] as string) || `Request failed (${res.status})`;
+  const err = (body?.["error"] ?? null) as Record<string, unknown> | string | null;
+  const code =
+    (typeof err === "object" && err ? (err["code"] as string) : typeof err === "string" ? err : "") ||
+    ((body?.["code"] as string) ?? "");
+  const message =
+    (typeof err === "object" && err ? (err["message"] as string) : "") ||
+    (body?.["message"] as string) ||
+    `Request failed (${res.status})`;
 
   if (res.status === 409) {
     return { kind: "duplicate", code: code || "duplicate_image", message };
@@ -155,6 +161,8 @@ export async function fetchBranches(organizationId: string) {
     .from("branches")
     .select("id, name")
     .eq("organization_id", organizationId)
+    .eq("is_active", true)
+    .eq("is_deleted", false)
     .order("name");
   if (error) throw error;
   return (data ?? []) as { id: string; name: string }[];
