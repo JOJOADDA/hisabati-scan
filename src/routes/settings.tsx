@@ -63,32 +63,6 @@ function SettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
-          <h2 className="text-sm font-semibold">Hisabati connection</h2>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Scanner only stores the project URL and the public publishable key. Never a service key.
-          </p>
-          <div className="mt-3 space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="url">Project URL</Label>
-              <Input id="url" value={url} onChange={(e) => setUrl(e.target.value)} className="h-11" />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="key">Publishable / anon key</Label>
-              <Input
-                id="key"
-                value={key}
-                onChange={(e) => setKey(e.target.value)}
-                placeholder="sb_publishable_... or eyJ..."
-                className="h-11"
-              />
-            </div>
-            <Button className="h-11 w-full" onClick={save}>
-              {saved ? "Saved" : "Save connection"}
-            </Button>
-          </div>
-        </div>
-
         <p className="px-1 text-center text-xs text-muted-foreground">
           Receipts are analysed, validated and stored by Hisabati Core. Scanner only submits them.
         </p>
