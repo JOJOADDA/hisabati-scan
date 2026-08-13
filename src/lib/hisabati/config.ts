@@ -16,35 +16,17 @@ const ENV_URL = (import.meta.env["VITE_HISABATI_SUPABASE_URL"] as string | undef
 const ENV_KEY =
   (import.meta.env["VITE_HISABATI_SUPABASE_PUBLISHABLE_KEY"] as string | undefined) ?? "";
 
-const LS_URL = "hisabati.url";
-const LS_KEY = "hisabati.key";
-
 export const SUBMIT_RECEIPT_PATH = "/functions/v1/submit-receipt";
 
-function ls(key: string): string {
-  if (typeof window === "undefined") return "";
-  try {
-    return window.localStorage.getItem(key) ?? "";
-  } catch {
-    return "";
-  }
-}
-
+/**
+ * Connection values are build-time only and are never editable or visible in the UI.
+ */
 export function getHisabatiUrl(): string {
-  return (ls(LS_URL) || ENV_URL || DEFAULT_URL).replace(/\/+$/, "");
+  return (ENV_URL || DEFAULT_URL).replace(/\/+$/, "");
 }
 
 export function getHisabatiKey(): string {
-  return ls(LS_KEY) || ENV_KEY || DEFAULT_KEY;
-}
-
-export function setHisabatiConfig(url: string, key: string) {
-  try {
-    window.localStorage.setItem(LS_URL, url.trim().replace(/\/+$/, ""));
-    window.localStorage.setItem(LS_KEY, key.trim());
-  } catch {
-    /* ignore */
-  }
+  return ENV_KEY || DEFAULT_KEY;
 }
 
 export function isConfigured(): boolean {
