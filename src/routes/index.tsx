@@ -199,8 +199,8 @@ function ScannerPage() {
           scope={scope}
           pending={items.length}
           busy={busy}
-          onCamera={() => cameraRef.current?.click()}
-          onGallery={() => galleryRef.current?.click()}
+          onCamera={() => void pick("camera")}
+          onGallery={() => void pick("gallery")}
           onPending={() => navigate({ to: "/recent" })}
         />
       ) : null}
