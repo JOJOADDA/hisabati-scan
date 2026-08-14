@@ -12,7 +12,7 @@
  * No manual steps afterwards — `npx cap sync android` can run straight away.
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync, cpSync, rmSync, renameSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, cpSync, rmSync, writeFileSync, renameSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
@@ -98,6 +98,12 @@ if (existsSync(shell)) {
 if (!existsSync(index)) {
   console.error("[build:mobile] No index.html in dist-mobile — aborting.");
   process.exit(1);
+}
+
+// Normalise asset URLs so they resolve from any WebView scheme (https://localhost, file://).
+{
+  const html = readFileSync(index, "utf8").replaceAll('"/./', '"./').replaceAll("'/./", "'./");
+  writeFileSync(index, html);
 }
 
 // Drop any server-side leftovers that must not ship inside the APK.
