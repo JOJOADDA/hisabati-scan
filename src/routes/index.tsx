@@ -17,6 +17,7 @@ import { useHisabatiSession } from "@/hooks/useHisabatiSession";
 import { useQueue } from "@/hooks/useQueue";
 import { useScope } from "@/hooks/useScope";
 import { compressImage } from "@/lib/hisabati/image";
+import { captureWithNativeCamera, isNative } from "@/lib/native";
 import { processItem } from "@/lib/hisabati/processor";
 import { putItem, emitQueueChange } from "@/lib/hisabati/queue";
 import type { QueueItem, SubmitResult } from "@/lib/hisabati/types";
