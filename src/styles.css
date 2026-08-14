@@ -208,6 +208,3 @@
     user-select: none;
   }
 }
-
-/* Hover styling only where a real pointer exists (avoids sticky hover on touch) */
-@custom-variant hover (&:hover);
