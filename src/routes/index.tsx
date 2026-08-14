@@ -17,6 +17,7 @@ import { useHisabatiSession } from "@/hooks/useHisabatiSession";
 import { useQueue } from "@/hooks/useQueue";
 import { useScope } from "@/hooks/useScope";
 import { compressImage } from "@/lib/hisabati/image";
+import { captureWithNativeCamera, isNative } from "@/lib/native";
 import { processItem } from "@/lib/hisabati/processor";
 import { putItem, emitQueueChange } from "@/lib/hisabati/queue";
 import type { QueueItem, SubmitResult } from "@/lib/hisabati/types";
@@ -79,10 +80,7 @@ function ScannerPage() {
     };
   }, [stage]);
 
-  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
+  async function acceptBlob(file: Blob) {
     setBusy(true);
     try {
       const base64 = await compressImage(file);
@@ -97,6 +95,23 @@ function ScannerPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    await acceptBlob(file);
+  }
+
+  /** Native devices use the Capacitor camera/gallery picker; the web falls back to <input type="file">. */
+  async function pick(source: "camera" | "gallery") {
+    if (isNative()) {
+      const blob = await captureWithNativeCamera(source);
+      if (blob) await acceptBlob(blob);
+      return;
+    }
+    (source === "camera" ? cameraRef : galleryRef).current?.click();
   }
 
   async function submit() {
@@ -184,8 +199,8 @@ function ScannerPage() {
           scope={scope}
           pending={items.length}
           busy={busy}
-          onCamera={() => cameraRef.current?.click()}
-          onGallery={() => galleryRef.current?.click()}
+          onCamera={() => void pick("camera")}
+          onGallery={() => void pick("gallery")}
           onPending={() => navigate({ to: "/recent" })}
         />
       ) : null}

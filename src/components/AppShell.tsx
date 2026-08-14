@@ -27,7 +27,10 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
 
       <main className="mx-auto w-full max-w-xl flex-1 px-4 pb-28 pt-4">{children}</main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border/70 bg-card/95 backdrop-blur">
+      <nav
+        className="app-chrome fixed inset-x-0 bottom-0 z-20 border-t border-border/70 bg-card/95 backdrop-blur"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
         <div className="mx-auto flex w-full max-w-xl items-stretch">
           {NAV.map(({ to, label, icon: Icon }) => {
             const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
