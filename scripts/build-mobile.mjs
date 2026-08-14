@@ -71,17 +71,19 @@ if (build.status !== 0) process.exit(build.status ?? 1);
 /* ------------------------------------------------------- 3. normalise output */
 
 // Depending on the TanStack/nitro version the client bundle can land in
-// dist-mobile/, dist-mobile/client/ or .output/public/. Collapse to dist-mobile/.
-const candidates = [OUT, join(OUT, "client"), join(root, ".output/public"), join(root, "dist/client")];
-const source = candidates.find((dir) => existsSync(join(dir, "index.html")) || existsSync(join(dir, "_shell.html")));
+// dist-mobile/, dist-mobile/client/ or .output/public/. Collapse everything to dist-mobile/.
+const nested = [join(OUT, "client"), join(root, ".output/public"), join(root, "dist/client")].filter(
+  (dir) => existsSync(join(dir, "_shell.html")) || existsSync(join(dir, "index.html")),
+);
 
-if (!source) {
-  console.error("[build:mobile] Could not locate the built client bundle. Looked in:\n" + candidates.join("\n"));
-  process.exit(1);
+for (const dir of nested) {
+  cpSync(dir, OUT, { recursive: true, force: true });
 }
+rmSync(join(OUT, "client"), { recursive: true, force: true });
 
-if (source !== OUT) {
-  cpSync(source, OUT, { recursive: true });
+if (!existsSync(join(OUT, "index.html")) && !existsSync(join(OUT, "_shell.html"))) {
+  console.error("[build:mobile] Could not locate the built client bundle (no index.html/_shell.html).");
+  process.exit(1);
 }
 
 // SPA entry: TanStack emits _shell.html — Capacitor needs index.html.
