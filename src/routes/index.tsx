@@ -79,10 +79,7 @@ function ScannerPage() {
     };
   }, [stage]);
 
-  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
+  async function acceptBlob(file: Blob) {
     setBusy(true);
     try {
       const base64 = await compressImage(file);
@@ -97,6 +94,23 @@ function ScannerPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    await acceptBlob(file);
+  }
+
+  /** Native devices use the Capacitor camera/gallery picker; the web falls back to <input type="file">. */
+  async function pick(source: "camera" | "gallery") {
+    if (isNative()) {
+      const blob = await captureWithNativeCamera(source);
+      if (blob) await acceptBlob(blob);
+      return;
+    }
+    (source === "camera" ? cameraRef : galleryRef).current?.click();
   }
 
   async function submit() {
