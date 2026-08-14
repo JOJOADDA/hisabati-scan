@@ -6,10 +6,37 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+/**
+ * MOBILE_BUILD=1 switches the build into "Capacitor mode":
+ *  - no nitro / no SSR server output
+ *  - full client-side SPA shell
+ *  - fixed output directory: dist-mobile/
+ *  - relative asset base so the bundle works from any WebView scheme
+ * The web build (`npm run build:web`) is untouched.
+ */
+const isMobile = process.env["MOBILE_BUILD"] === "1";
+
 export default defineConfig({
-  tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
-    server: { entry: "server" },
-  },
+  ...(isMobile
+    ? {
+        nitro: false as const,
+        tanstackStart: {
+          spa: { enabled: true },
+          prerender: { enabled: false },
+        },
+        vite: {
+          base: "./",
+          build: {
+            outDir: "dist-mobile",
+            emptyOutDir: true,
+          },
+        },
+      }
+    : {
+        tanstackStart: {
+          // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
+          // nitro/vite builds from this
+          server: { entry: "server" },
+        },
+      }),
 });
